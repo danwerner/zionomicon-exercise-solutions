@@ -19,7 +19,7 @@ import java.lang.IllegalArgumentException as IAE
  */
 object Ch21_Ex2_CountDownLatch:
 
-  class CountDownLatch(counter: TRef[Int]):
+  class CountDownLatch private (counter: TRef[Int]):
     def countDown: UIO[Unit] =
       STM.whenSTM(counter.get.map(_ > 0)) {
         counter.update(_ - 1)

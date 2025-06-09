@@ -9,8 +9,8 @@ import zio.stream.*
  */
 object Ch11_Ex1_LoadBalancer:
 
-  class LoadBalancer[A](
-    workerCount: Int,
+  class LoadBalancer[A] private (
+    val workerCount: Int,
     process: A => Task[A],
     currentQueueIndex: Ref[Int],
     queues: Chunk[Queue[A]]
