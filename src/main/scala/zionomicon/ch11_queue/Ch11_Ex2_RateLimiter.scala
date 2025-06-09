@@ -10,20 +10,31 @@ import zio.stream.*
  */
 object Ch11_Ex2_RateLimiter:
 
-  class RateLimiter(val max: Int, val interval: Duration, queue: Queue[Unit]):
+  class RateLimiter private (val max: Int, val interval: Duration, queue: Queue[Unit]):
 
     def acquire: UIO[Unit] =
+      // The fiber draining this stream will automatically be interrupted
+      // once the queue is shut down.
       ZStream.fromQueue(queue)
-        .throttleShape(max, interval, 0)(_ => 1)
+        .rechunk(1)
+        .throttleShape(max, interval, 0)(_.length)
         .runDrain
         .forkDaemon
         .unit
 
     def apply[R, E, A](zio: ZIO[R, E, A]): ZIO[R, E, A] =
-      ???
+      // Will backpressure when queue is full, effectively delaying execution
+      // until there is room in the queue again.
+      queue.offer(()) *> zio
+
+    def shutdown: UIO[Unit] = queue.shutdown
+
+    def awaitShutdown: UIO[Unit] = queue.awaitShutdown
+
+    def isShutdown: UIO[Boolean] = queue.isShutdown
 
   object RateLimiter:
     def make(max: Int, interval: Duration): UIO[RateLimiter] =
       for
-        queue <- Queue.dropping[Unit](max)
+        queue <- Queue.bounded[Unit](max)
       yield RateLimiter(max, interval, queue)
