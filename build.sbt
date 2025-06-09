@@ -12,6 +12,7 @@ lazy val root = project
 
     scalaVersion := scala3Version,
 
+    scalacOptions ++= List("-preview"),
     libraryDependencies ++= dependencies,
     libraryDependencies ++= testDependencies.map(_ % Test)
   )
