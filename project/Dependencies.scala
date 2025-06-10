@@ -2,6 +2,12 @@ import sbt.*
 
 object Dependencies {
 
+  object Iron {
+    val ironVersion = "3.0.2-RC1"
+
+    val iron     = "io.github.iltotore" %% "iron"     % ironVersion
+  }
+
   object ZIO {
     val zioVersion = "2.1.19"
 
@@ -16,6 +22,7 @@ object Dependencies {
   }
 
   val dependencies: List[ModuleID] = List(
+    Iron.iron,
     ZIO.zio,
     ZIO.zioStreams
   )
