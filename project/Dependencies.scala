@@ -2,6 +2,12 @@ import sbt.*
 
 object Dependencies {
 
+  object Cats {
+    val catsVersion = "2.13.0"
+
+    val cats = "org.typelevel" %% "cats-core" % catsVersion
+  }
+
   object Iron {
     val ironVersion = "3.0.2-RC1"
 
@@ -22,6 +28,7 @@ object Dependencies {
   }
 
   val dependencies: List[ModuleID] = List(
+    Cats.cats,
     Iron.iron,
     ZIO.zio,
     ZIO.zioStreams
